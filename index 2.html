@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ТЕСТ ПО ИНТРИЖКАМ</title>
+<style>
+:root{--bg:#070707;--panel:#141414;--line:#303030;--text:#f4f4f4;--muted:#aaa;--pink:#ff3cac;--lime:#d5ff3f}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at top,#21102a 0,#090909 45%,#050505 100%);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+.wrap{max-width:850px;margin:auto;padding:28px 16px 60px}
+header{text-align:center;padding:26px 10px 20px}
+.kicker{color:var(--lime);font-size:.8rem;letter-spacing:.22em;font-weight:900}
+h1{font-size:clamp(2rem,7vw,4.4rem);line-height:.95;margin:14px 0;text-transform:uppercase;font-weight:1000;letter-spacing:-.05em;text-shadow:4px 4px 0 #7b145a}
+.subtitle{color:#c7c7c7;max-width:540px;margin:16px auto;line-height:1.5}
+.meme-strip{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:20px 0}
+.meme{border:1px solid #414141;background:#111;padding:8px 11px;border-radius:999px;font-size:.78rem;color:#ddd;transform:rotate(var(--r))}
+.card{background:linear-gradient(145deg,#171717,#0d0d0d);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 12px 35px #0008}
+.topline{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.85rem;margin-bottom:15px}
+.progress{height:6px;background:#303030;border-radius:9px;overflow:hidden;margin-bottom:22px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--lime));transition:width .25s}
+h2{font-size:clamp(1.2rem,4vw,1.7rem);margin:0 0 18px;line-height:1.25}
+.hint{font-size:.83rem;color:var(--muted);margin:-8px 0 17px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.option{display:flex;align-items:center;gap:10px;text-align:left;padding:14px 13px;border:1px solid #393939;background:#101010;color:var(--text);border-radius:12px;cursor:pointer;font-size:1rem;min-height:54px;transition:.15s}
+.option:hover{border-color:#a42a7d;transform:translateY(-1px)}.option.selected{border-color:var(--pink);background:#32142a;box-shadow:inset 0 0 0 1px var(--pink)}
+.option input{accent-color:var(--pink);width:17px;height:17px;flex-shrink:0}
+.actions{display:flex;gap:10px;justify-content:space-between;margin-top:22px}.btn{border:0;border-radius:11px;padding:13px 18px;font-weight:900;cursor:pointer;font-size:.95rem}.primary{background:var(--lime);color:#111}.secondary{background:#292929;color:#eee}.btn:disabled{opacity:.35;cursor:not-allowed}
+.small{font-size:.8rem;color:#888;text-align:center;margin-top:22px}
+.result{text-align:center;padding:28px 20px}.percent{font-size:clamp(4rem,15vw,7rem);font-weight:1000;letter-spacing:-.07em;color:var(--lime);text-shadow:4px 4px #592047}.result h2{font-size:1.8rem;margin:8px 0 12px}.result p{color:#d0d0d0;line-height:1.6;max-width:550px;margin:10px auto 22px}
+.hidden{display:none}.tag{display:inline-block;border:1px solid #444;padding:6px 10px;border-radius:99px;color:#bbb;font-size:.75rem;margin:4px}
+@media(max-width:560px){.options{grid-template-columns:1fr}.card{padding:17px}.actions .btn{flex:1}}
+</style>
+</head>
+<body><main class="wrap">
+<header>
+<div class="kicker">ОФИЦИАЛЬНЫЙ ТЕСТ ПО ЛОРУ</div>
+<h1>ТЕСТ ПО<br>ИНТРИЖКАМ</h1>
+<p class="subtitle">Проверка памяти, эмоционального урона и знания главных NPC твоей сюжетной линии.</p>
+<div class="meme-strip"><span class="meme" style="--r:-3deg">TROLLFACE 😈</span><span class="meme" style="--r:2deg">DOGE 🐕</span><span class="meme" style="--r:-2deg">67 💀</span><span class="meme" style="--r:3deg">Я ТЕБЯ СОГНУ</span></div>
+</header>
+<section id="quiz">
+<div class="card">
+<div class="topline"><span id="counter">ВОПРОС 1 / 20</span><span id="multi">ОДИН ОТВЕТ</span></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<h2 id="question"></h2><div class="hint" id="hint">Выбери правильный ответ.</div>
+<div class="options" id="options"></div>
+<div class="actions"><button class="btn secondary" id="back">← Назад</button><button class="btn primary" id="next">ДАЛЕЕ →</button></div>
+</div>
+</section>
+<section id="result" class="card result hidden">
+<div class="kicker">ТВОЙ РЕЗУЛЬТАТ</div><div class="percent" id="percent">0%</div><h2 id="grade"></h2><p id="description"></p>
+<div><span class="tag">🗿 ЛОР ПРОВЕРЕН</span><span class="tag">💀 NPC НЕ ПРОШЁЛ</span></div>
+<div class="actions" style="justify-content:center"><button class="btn primary" id="retry">ПРОЙТИ ЕЩЁ РАЗ ↻</button><button class="btn secondary" id="share">ПОДЕЛИТЬСЯ</button></div>
+</section>
+<p class="small">Сделано на чёрном фоне и сомнительных жизненных сюжетах. Все совпадения не случайны 💀</p>
+</main>
+<script>
+const people=["Убийца","Данечка","Артём","Коленная чашечка","Бывший"];
+const qs=[
+["легко кого я люблю",["Убийца"],false],
+["кто дарил мне цветы? тут два правильных ответа",["Артём","Коленная чашечка"],true],
+["кто не умеет целоваться",["Данечка"],false],
+["кто девственик? два варианта ответа",["Данечка","Артём"],true],
+["у кого я была во всех смыслах первая девушка",["Данечка"],false],
+["кто больше готов на всё ради любимой девушки",["Убийца","Коленная чашечка"],true],
+["с кем из них мы дружили в детстве",["Убийца"],false],
+["с кем больше бабочек в животе",["Убийца"],false],
+["кто хочет чтобы его выебала страпоном девушка АХАХАХ",["Данечка"],false],
+["кто признавался в любви",people,true],
+["кто слушает эншпиля, гуфа, Басту",["Убийца"],false],
+["кого бросила девушка, когда сказала, что он заразил её ВИЧом",["Коленная чашечка"],false],
+["с кем я целовалась",["Данечка"],false],
+["кого из них знает моя бабушка",["Убийца"],false],
+["кто уходит в армию",["Убийца"],false],
+["кто из них первым напишет тебе в 3 часа ночи со словами «ты спишь?»",["Убийца"],false],
+["кто больше всех воздухан на свет «ты мне нравишься»",["Убийца"],false],
+["кто уехал в Сочи и ничё мне не сказал",["Бывший"],false],
+["кто недостоин меня",people,true],
+["кто выводил на ревность, но мне пох АХАХХА",["Артём"],false]
+];
+let index=0, answers=qs.map(()=>[]);
+const $=id=>document.getElementById(id);
+function render(){
+ const [q,correct,multi]=qs[index];
+ $("counter").textContent=`ВОПРОС ${index+1} / ${qs.length}`;
+ $("multi").textContent=multi?"НЕСКОЛЬКО ОТВЕТОВ":"ОДИН ОТВЕТ";
+ $("question").textContent=q;
+ $("hint").textContent=multi?"Можно выбрать несколько вариантов.":"Выбери один вариант.";
+ $("bar").style.width=(index/qs.length*100)+"%";
+ $("options").innerHTML="";
+ people.forEach(p=>{
+  const label=document.createElement("label");label.className="option"+(answers[index].includes(p)?" selected":"");
+  const input=document.createElement("input");input.type=multi?"checkbox":"radio";input.name="answer";input.checked=answers[index].includes(p);
+  input.addEventListener("change",()=>{
+   if(multi){if(input.checked)answers[index].push(p);else answers[index]=answers[index].filter(x=>x!==p)}
+   else answers[index]=[p];
+   render();
+  });
+  const span=document.createElement("span");span.textContent=p;
+  label.append(input,span);$("options").append(label);
+ });
+ $("back").disabled=index===0;
+ $("next").textContent=index===qs.length-1?"УЗНАТЬ РЕЗУЛЬТАТ 💀":"ДАЛЕЕ →";
+}
+function finish(){
+ let score=0;
+ qs.forEach((q,i)=>{
+  const a=[...answers[i]].sort(),c=[...q[1]].sort();
+  if(a.length===c.length&&a.every((v,j)=>v===c[j]))score++;
+ });
+ const pct=Math.round(score/qs.length*100);
+ $("quiz").classList.add("hidden");$("result").classList.remove("hidden");
+ $("percent").textContent=pct+"%";
+ let grade,desc;
+ if(pct>=90){grade="ЛЕГЕНДА ИНТРИЖЕК";desc="Ты знаешь этот лор подозрительно хорошо. У тебя либо феноменальная память, либо ты и есть главный сценарист 💅";}
+ else if(pct>=70){grade="ПОСВЯЩЁННЫЙ NPC";desc="Ты в теме, но некоторые сюжетные повороты всё ещё застали тебя врасплох. Почти лор-мастер.";}
+ else if(pct>=40){grade="СЛУЧАЙНЫЙ ПРОХОЖИЙ";desc="Ты слышал(а) пару сплетен в коридоре, но сезон явно пропустил(а). Пересмотри сюжет, братан.";}
+ else {grade="КТО ТЫ ВООБЩЕ";desc="Ты зашёл(ла) не в ту вселенную 💀 Это не тест, это контрольная по чужой драме.";}
+ $("grade").textContent=grade;$("description").textContent=`Правильных ответов: ${score} из ${qs.length}. `+desc;
+ $("bar").style.width="100%";
+}
+$("next").addEventListener("click",()=>{if(index<qs.length-1){index++;render()}else finish()});
+$("back").addEventListener("click",()=>{if(index>0){index--;render()}});
+$("retry").addEventListener("click",()=>{index=0;answers=qs.map(()=>[]);$("result").classList.add("hidden");$("quiz").classList.remove("hidden");render()});
+$("share").addEventListener("click",async()=>{
+ const text=`Я прошёл(ла) «ТЕСТ ПО ИНТРИЖКАМ» и получил(а) ${$("percent").textContent}! Проверь, насколько ты знаешь этот лор 💀`;
+ try{if(navigator.share)await navigator.share({title:"ТЕСТ ПО ИНТРИЖКАМ",text});else if(navigator.clipboard){await navigator.clipboard.writeText(text);$("share").textContent="ТЕКСТ СКОПИРОВАН ✓"}else alert(text)}catch(e){}
+});
+render();
+</script></body></html>
